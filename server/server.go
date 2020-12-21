@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 )
 
 type registeredHandler struct {
@@ -20,16 +21,20 @@ type registeredHandler struct {
 var handlers = make([]registeredHandler, 0)
 
 func RegisterHandler(pattern string, handler http.HandlerFunc) {
+	log.Println("Registering handler for", pattern)
 	handlers = append(handlers, registeredHandler{pattern, handler})
 }
 
-// func StartFileServer(stop chan struct{})
+var store *sessions.CookieStore
 
-func StartServer(port int) {
+func StartServer(port int, sessionKey string) {
 	if err := initTemplates(); err != nil {
 		log.Println("Error parsing templates:", err)
 		return
 	}
+
+	store = sessions.NewCookieStore([]byte(sessionKey))
+
 	r := mux.NewRouter()
 	for i := range handlers {
 		r.HandleFunc(handlers[i].Pattern, handlers[i].Handler)

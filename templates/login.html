@@ -1,0 +1,41 @@
+{{ define "content" }}
+<div class="header">
+	<h1>Log in / Register</h1>
+	<h2>Start using the most securest file sharing site on the whole wide web!</h2>
+</div>
+
+
+<div class="content">
+	{{ if . }}
+	<h3 class="error">{{ . }}</h3>
+	{{ end }}
+	<h2>Log into your existing account</h2>
+	<form class="pure-form" method="POST" action="/login/auth">
+		<!-- <fieldset> -->
+			<input type="text" id="username" name="username" placeholder="Username" />
+			<input type="password" id="password" name="password" placeholder="Password" />
+			<button type="submit" class="pure-button ure-button-primary">Log in</button>
+		<!-- </fieldset> -->
+	</form>
+	<h2>Register a new account</h2>
+	<form class="pure-form pure-form-aligned">
+		<fieldset>
+			<div class="pure-control-group">
+				<label for="register-username">Username</label>
+				<input type="text" id="register-username" name="username" placeholder="Username" />
+			</div>
+			<div class="pure-control-group">
+				<label for="register-password">Password</label>
+				<input type="password" id="register-password" name="password" placeholder="Password" />
+			</div>
+			<div class="pure-control-group">
+				<label for="confirm">Confirm Password</label>
+				<input type="password" id="confirm" name="confirm" placeholder="Confirm Password" />
+			</div>
+			<div class="pure-controls">
+				<button type="submit" class="pure-button ure-button-primary">Register</button>
+			</div>
+		</fieldset>
+	</form>
+</div>
+{{ end }}

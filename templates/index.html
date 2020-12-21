@@ -1,0 +1,32 @@
+{{ define "content" }}
+<div class="header">
+	<h1>Home page</h1>
+</div>
+
+
+<div class="content">
+	<h2>Your uploaded files</h2>
+	<!-- <div class="pure-g"> -->
+		<table class="pure-table pure-table-horizontal">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Filename</th>
+					<th>Visibility</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{ range .Uploads }}
+				<tr>
+					<td>{{ .Date | fdate }}</td>
+					<td>{{ .Filename }}</td>
+					<td>{{ .Visibility }}</td>
+					<td><input type="button" value="{{ .Action }}" /></td>
+				</tr>
+				{{ end }}
+			</tbody>
+		</table>
+	<!-- </div> -->
+</div>
+{{ end }}

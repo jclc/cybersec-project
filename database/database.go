@@ -16,6 +16,9 @@ func Init(databaseFile string) error {
 		return err
 	}
 	db = d
+	if err := initTables(); err != nil {
+		return err
+	}
 	return nil
 }
 

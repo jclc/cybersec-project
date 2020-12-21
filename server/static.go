@@ -24,7 +24,6 @@ func ServeStatic(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	file, ok := q["file"]
 	if !ok || len(file) != 1 {
-
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

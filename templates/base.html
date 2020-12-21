@@ -1,4 +1,45 @@
+{{ define "base" }}
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<link rel="icon" type="image/png" href="/static?file=favicon.png">
+	<link rel="stylesheet" href="/static?file=base-min.css">
+	<link rel="stylesheet" href="/static?file=pure-min.css">
+	<link rel="stylesheet" href="/static?file=grids-responsive-min.css">
+	<link rel="stylesheet" href="/static?file=styles.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{{ if .BaseCtx.Title }}
+	<title>{{ .BaseCtx.Title }}</title>
+	{{ else }}
+	<title>Kilo: file sharing site of the future!</title>
+	{{ end }}
+</head>
+
+
+<body>
+<div id="layout">
+
+<div id="menu">
+	<div class="pure-menu">
+		<ul class="pure-menu-list">
+			{{ range .NavItems }}
+			<li class="pure-menu-item">
+				<a class="pure-menu-link" href="{{ index . 2 }}">{{ index . 1 }}</a>
+			</li>
+			{{ end }}
+		</ul>
+	</div>
+</div>
+
+
+<div id="main">
+{{ template "content" .ContentData }}
+</div>
+
+</div>
+</body>
+
 
 </html>
+{{ end }}
