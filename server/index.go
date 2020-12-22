@@ -1,68 +1,37 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
-	"time"
+
+	"github.com/jclc/cybersec-project/database"
 )
 
 func init() {
 	RegisterHandler("/", handleIndex)
-	RegisterHandler("/users", handleUsers)
-	// RegisterHandler("/storage", handleTemp)
+	RegisterHandler("/myfiles/", handleFiles)
 }
 
-type Upload struct {
-	Date       time.Time
-	Filename   string
-	Visibility string
-	Action     string
-}
-
-// HandleIndex displays the front page to the user.
-func handleIndex(w http.ResponseWriter, r *http.Request) {
-	ctx := struct {
-		Uploads []Upload
-	}{
-		Uploads: []Upload{
-			{
-				Date:       time.Now(),
-				Filename:   "a.jpg",
-				Visibility: "Public",
-				Action:     "Delete",
-			},
-			{
-				Date:       time.Now().Add(time.Hour * -531),
-				Filename:   "b.jpg",
-				Visibility: "Public",
-				Action:     "Delete",
-			},
-			{
-				Date:       time.Now().Add(time.Hour * -5312),
-				Filename:   "c.jpg",
-				Visibility: "Hidden",
-				Action:     "Delete",
-			},
-		},
+func handleFiles(w http.ResponseWriter, r *http.Request) {
+	// log.Println("/myfiles/")
+	user := getRegisteredUser(r)
+	if user.ID == 0 {
+		http.Redirect(w, r, "/", http.StatusUnauthorized)
+		return
 	}
-	RenderTemplate(w, "index.html", nil, &ctx)
+	http.Redirect(w, r, fmt.Sprintf("/user/%d/", user.ID), http.StatusFound)
 }
 
-// func handleTemp(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method == "GET" {
-// 		q := r.URL.Query()
-// 		file, ok := q["file"]
-// 		err := storage.Get(w, r, "image.jpg", "image")
-// 		if err != nil {
-// 			log.Println(err)
-// 		}
-// 	}
-// }
+func handleIndex(w http.ResponseWriter, r *http.Request) {
+	// log.Println("/")
+	ctx := struct {
+		Users []database.User
+	}{}
+	ctx.Users = database.GetUsers()
 
-func handleUsers(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "list_users.html", nil, []string{
-		"Admin",
-		"Superuser",
-		"Literal God",
-		"Noob",
-	})
+	baseCtx := BaseContext{
+		Nav:  "index",
+		User: getRegisteredUser(r),
+	}
+	RenderTemplate(w, "index.html", &baseCtx, &ctx)
 }

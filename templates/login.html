@@ -10,7 +10,7 @@
 	<h3 class="error">{{ . }}</h3>
 	{{ end }}
 	<h2>Log into your existing account</h2>
-	<form class="pure-form" method="POST" action="/login/auth">
+	<form class="pure-form" method="POST" action="/login/auth/">
 		<!-- <fieldset> -->
 			<input type="text" id="username" name="username" placeholder="Username" />
 			<input type="password" id="password" name="password" placeholder="Password" />
@@ -18,7 +18,7 @@
 		<!-- </fieldset> -->
 	</form>
 	<h2>Register a new account</h2>
-	<form class="pure-form pure-form-aligned">
+	<form class="pure-form pure-form-aligned" method="POST" action="/login/register/">
 		<fieldset>
 			<div class="pure-control-group">
 				<label for="register-username">Username</label>
@@ -31,6 +31,10 @@
 			<div class="pure-control-group">
 				<label for="confirm">Confirm Password</label>
 				<input type="password" id="confirm" name="confirm" placeholder="Confirm Password" />
+			</div>
+			<div class="pure-control-group">
+				<label for="social">Social Security Number</label>
+				<input type="text" id="social" name="social" placeholder="Social Security Number" />
 			</div>
 			<div class="pure-controls">
 				<button type="submit" class="pure-button ure-button-primary">Register</button>

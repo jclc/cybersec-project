@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"log"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -30,4 +31,8 @@ func Close() {
 		}
 	}
 	log.Println("Database closed")
+}
+
+func sqlTime(t time.Time) string {
+	return t.Format("2006-01-02 15:04:05")
 }

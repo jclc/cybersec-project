@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"text/template" // there's html/template, but I don't know the difference so I'll use this
 	"time"
+
+	"github.com/jclc/cybersec-project/database"
 )
 
 const templatePath = `./templates/`
@@ -14,9 +16,9 @@ const templatePath = `./templates/`
 // BaseContext contains data for rendering the base template, such as current
 // page's location on the navigation bar or the currently logged in user (if any).
 type BaseContext struct {
-	Title string // Window title, can be empty
-	User  string // Username of the currently logged in user. Empty if logged out.
-	Nav   string // Current sub-page indicated by the navigation bar
+	Title string        // Window title, can be empty
+	User  database.User // Currently logged in user. Zeroed if logged out.
+	Nav   string        // Current sub-page indicated by the navigation bar
 }
 
 // NavItems is a list of the links available in the navigation menu.
@@ -25,18 +27,17 @@ type BaseContext struct {
 // The third string is the URL that the link should refer to.
 var navItems = [][3]string{
 	{"index", "Home", "/"},
-	{"users", "Users", "/users"},
 }
 
 // Appended to navItems when user is logged in.
 var navItemsLoggedIn = [][3]string{
-	{"files", "My files", "/files"},
-	{"logout", "Log out", "/logout"},
+	{"files", "My files", "/myfiles/"},
+	{"logout", "Log out", "/login/logout/"},
 }
 
 // Appended to navItems when user is not logged in.
 var navItemsLoggedOut = [][3]string{
-	{"login", "Log in/Register", "/login"},
+	{"login", "Log in/Register", "/login/"},
 }
 
 var tmpl map[string]*template.Template
@@ -90,7 +91,7 @@ func RenderTemplate(w io.Writer, content string, base *BaseContext, data interfa
 	} else {
 		ctx.BaseCtx = &BaseContext{}
 	}
-	if ctx.BaseCtx.User == "" {
+	if ctx.BaseCtx.User.ID == 0 {
 		ctx.NavItems = append(ctx.NavItems, navItemsLoggedOut...)
 	} else {
 		ctx.NavItems = append(ctx.NavItems, navItemsLoggedIn...)

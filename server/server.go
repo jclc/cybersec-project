@@ -21,7 +21,6 @@ type registeredHandler struct {
 var handlers = make([]registeredHandler, 0)
 
 func RegisterHandler(pattern string, handler http.HandlerFunc) {
-	log.Println("Registering handler for", pattern)
 	handlers = append(handlers, registeredHandler{pattern, handler})
 }
 
@@ -36,7 +35,9 @@ func StartServer(port int, sessionKey string) {
 	store = sessions.NewCookieStore([]byte(sessionKey))
 
 	r := mux.NewRouter()
+	r.StrictSlash(true)
 	for i := range handlers {
+		log.Println("Registering handler for", handlers[i])
 		r.HandleFunc(handlers[i].Pattern, handlers[i].Handler)
 	}
 	server := http.Server{

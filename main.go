@@ -27,6 +27,7 @@ func main() {
 		return
 	}
 	defer database.Close()
+	database.CreateTestData()
 
 	server.StartServer(*port, *sessionKey)
 }

@@ -1,0 +1,38 @@
+{{ define "content" }}
+<div class="header">
+	<h1>{{ .User.Username }}</h1>
+</div>
+
+
+<div class="content">
+	<!-- <h2 class="pure-u-1">Active users</h2> -->
+	{{ if .Uploads }}
+	<table class="pure-table pure-table-horizontal">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Filename</th>
+				<th>Visibility</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{ range .Uploads }}
+			<tr>
+				<td>{{ .Timestamp | fdate }}</td>
+				<td><a href="/uploads/{{ .ID }}/">{{ .Filename }}</a></td>
+				{{ if .Visibility }}
+				<td>Public</td>
+				{{ else }}
+				<td>Hidden</td>
+				{{ end }}
+				<td><input type="button" value="Change"><input type="button" value="Delete"></td>
+			</tr>
+			{{ end }}
+		</tbody>
+	</table>
+	{{ else }}
+	<p>No files have been uploaded.</p>
+	{{ end }}
+</div>
+{{ end }}

@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	RegisterHandler("/static", ServeStatic)
+	RegisterHandler("/static/", ServeStatic)
 }
 
 // ServeStatic serves a static file from the static/ directory. Boy, I wish there
