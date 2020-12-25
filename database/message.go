@@ -7,7 +7,7 @@ import (
 
 type Message struct {
 	ID        int64
-	Content   []byte
+	Content   string
 	Timestamp time.Time
 	Author    string
 	Recipient int64

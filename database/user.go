@@ -39,7 +39,7 @@ func (u *User) Create() error {
 func (u *User) GetMessages() []Message {
 	rows, err := db.Query(
 		`SELECT id, content, timestamp, author, recipient `+
-			`FROM Messages `+
+			`FROM Message `+
 			`WHERE recipient=?`, u.ID,
 	)
 	if err != nil {

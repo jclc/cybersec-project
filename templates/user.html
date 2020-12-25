@@ -34,5 +34,30 @@
 	{{ else }}
 	<p>No files have been uploaded.</p>
 	{{ end }}
+
+
+	{{ if .LoggedInUser.ID }}
+	<h2>Post a message</h2>
+	<form class="pure-form pure-g">
+		<div class="pure-u-4-5">
+			<input type="text" class="pure-input-1" />
+		</div>
+		<div class="pure-u-1-5">
+			<input type="submit" value="Post" class="pure-input-1">
+		</div>
+	</form>
+	{{ end }}
+
+	{{ if .Messages }}
+	<h2>Comments</h2>
+	{{ range .Messages }}
+	<div>
+		<h3>{{ .Author }} @ {{ .Timestamp | fdate }}</h3>
+		<p>{{ .Content }}</p>
+	</div>
+	{{ end }}
+	{{ else }}
+	<h2>No comments have been posted.</h2>
+	{{ end }}
 </div>
 {{ end }}

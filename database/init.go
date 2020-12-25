@@ -66,8 +66,8 @@ func CreateTestData() {
 
 	for i := 0; i < 10; i++ {
 		var message Message
-		message.Content = []byte(fmt.Sprintf("This is the message #%d", i))
-		message.Author = admin.ID
+		message.Content = fmt.Sprintf("This is the message #%d", i)
+		message.Author = "admin"
 		message.Recipient = admin.ID
 		err := message.Save()
 		if err != nil {
