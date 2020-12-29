@@ -51,11 +51,20 @@ func (u *Upload) Save() error {
 	return nil
 }
 
-func (u *Upload) Delete() {
+func (u *Upload) Delete() error {
 	if u.ID == 0 {
-		return
+		return nil
 	}
 
+	_, err := db.Exec(
+		`DELETE FROM Upload `+
+			`WHERE id=?;`, u.ID,
+	)
+	if err != nil {
+		return err
+	}
+	u.ID = 0
+	return nil
 }
 
 func GetUploads(owner int64, onlyPublic bool) []Upload {

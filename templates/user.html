@@ -4,8 +4,49 @@
 </div>
 
 
+<style>
+	.delete-msg-button {
+		font-size: 50%;
+		background: red;
+		color: white;
+	}
+</style>
+
+<script>
+	function makeRefresh(f) {
+		f.onreadystatechange = () => {
+			if (f.readyState == 4 && f.status == 200) {
+				location.reload();
+			}
+		}
+	}
+
+	function deleteMessage(id) {
+		var req = new XMLHttpRequest();
+		makeRefresh(req);
+		req.open("DELETE", "/message/"+id+"/", true);
+		req.send();
+	}
+
+	function changeUploadVisibility(id) {
+		var req = new XMLHttpRequest();
+		makeRefresh(req);
+		req.open("PATCH", "/upload/"+id+"/", true);
+		req.send();
+	}
+
+	function deleteUpload(id) {
+		var req = new XMLHttpRequest();
+		makeRefresh(req);
+		req.open("DELETE", "/upload/"+id+"/", true);
+		req.send();
+	}
+</script>
+
+
 <div class="content">
-	<!-- <h2 class="pure-u-1">Active users</h2> -->
+	{{- $p := . -}}
+
 	{{ if .Uploads }}
 	<table class="pure-table pure-table-horizontal">
 		<thead>
@@ -13,10 +54,11 @@
 				<th>Date</th>
 				<th>Filename</th>
 				<th>Visibility</th>
-				<th>Action</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
+
 			{{ range .Uploads }}
 			<tr>
 				<td>{{ .Timestamp | fdate }}</td>
@@ -26,7 +68,14 @@
 				{{ else }}
 				<td>Hidden</td>
 				{{ end }}
-				<td><input type="button" value="Change"><input type="button" value="Delete"></td>
+				<td>
+					{{ if eq $p.LoggedInUser.ID $p.User.ID }}
+					<input type="button" value="Change"
+						onclick="changeUploadVisibility({{ .ID }});">
+					<input type="button" value="Delete"
+						onclick="deleteUpload({{ .ID }});">
+					{{ end }}
+				</td>
 			</tr>
 			{{ end }}
 		</tbody>
@@ -38,12 +87,12 @@
 
 	{{ if .LoggedInUser.ID }}
 	<h2>Post a message</h2>
-	<form class="pure-form pure-g">
+	<form class="pure-form pure-g" method="POST" action="/user/{{ .User.ID }}/message/">
 		<div class="pure-u-4-5">
-			<input type="text" class="pure-input-1" />
+			<input name="content" type="text" class="pure-input-1" />
 		</div>
 		<div class="pure-u-1-5">
-			<input type="submit" value="Post" class="pure-input-1">
+			<button type="submit" class="pure-input-1">Post</button>
 		</div>
 	</form>
 	{{ end }}
@@ -52,7 +101,16 @@
 	<h2>Comments</h2>
 	{{ range .Messages }}
 	<div>
-		<h3>{{ .Author }} @ {{ .Timestamp | fdate }}</h3>
+		<h3 class="pure-g">
+			<span class="pure-u-4-5">
+				{{- .Author }} @ {{ .Timestamp | fdate -}}
+			</span>
+			<span class="pure-u-1-5">
+				{{- if or (eq .Author $p.LoggedInUser.Username) (eq $p.User.ID $p.LoggedInUser.ID) -}}
+				<a onclick="deleteMessage({{ .ID }});" class="pure-button delete-msg-button">Delete</a>
+				{{ end }}
+			</span>
+		</h3>
 		<p>{{ .Content }}</p>
 	</div>
 	{{ end }}

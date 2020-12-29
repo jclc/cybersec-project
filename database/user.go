@@ -40,7 +40,8 @@ func (u *User) GetMessages() []Message {
 	rows, err := db.Query(
 		`SELECT id, content, timestamp, author, recipient `+
 			`FROM Message `+
-			`WHERE recipient=?`, u.ID,
+			`WHERE recipient=? `+
+			`ORDER BY id DESC`, u.ID,
 	)
 	if err != nil {
 		log.Println("Error getting messages:", err)

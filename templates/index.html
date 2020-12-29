@@ -10,16 +10,16 @@
 	{{ if .Users }}
 	<table class="pure-table pure-table-horizontal pure-g">
 		<thead class="pure-u-1">
-			<tr class="pure-u-1">
-				<th class="pure-u-3-5">User</th>
-				<th class="pure-u">Uploaded files</th>
+			<tr>
+				<th>User</th>
+				<!-- <th class="pure-u">Uploaded files</th> -->
 			</tr>
 		</thead>
 		<tbody class="pure-u-1">
 			{{ range .Users }}
-			<tr class="pure-u-1">
-				<td class="pure-u-3-5"><a href="/user/{{ .ID }}/">{{ .Username }}</a></td>
-				<td class="pure-u">0</td>
+			<tr>
+				<td><a href="/user/{{ .ID }}/">{{ .Username }}</a></td>
+				<!-- <td class="pure-u">0</td> -->
 			</tr>
 			{{ end }}
 		</tbody>

@@ -30,7 +30,7 @@ func (m *Message) Save() error {
 		}
 		m.ID = i
 	} else {
-		// If ID is set, update user
+		// If ID is set, update message
 		_, err := db.Exec(
 			`UPDATE Message `+
 				`SET content=?, timestamp=?, author=?, recipient=?`+
@@ -40,6 +40,17 @@ func (m *Message) Save() error {
 			return err
 		}
 	}
+	return nil
+}
+
+func (m *Message) Delete() error {
+	_, err := db.Exec(
+		`DELETE FROM Message WHERE id=?;`, m.ID,
+	)
+	if err != nil {
+		return err
+	}
+	m.ID = 0
 	return nil
 }
 

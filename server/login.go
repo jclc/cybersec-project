@@ -19,11 +19,11 @@ func getRegisteredUser(r *http.Request) database.User {
 	id, ok := session.Values["user_id"].(int64)
 	if !ok || id == 0 {
 		// not logged in
-		log.Println("User is not logged in.")
+		// log.Println("User is not logged in.")
 		return database.User{}
 	}
 	username, _ := session.Values["username"].(string)
-	log.Println("User", username, "is logged in.")
+	// log.Println("User", username, "is logged in.")
 	return database.User{
 		ID:       id,
 		Username: username,
@@ -95,7 +95,7 @@ func handleLoginAttempt(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRegistration(w http.ResponseWriter, r *http.Request) {
-	log.Println("/login/register/")
+	// log.Println("/login/register/")
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
