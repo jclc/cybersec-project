@@ -16,7 +16,7 @@ func main() {
 	port := flag.Int("port", 11037, "HTTP port to use")
 	flag.Parse()
 
-	if err := storage.Init(*storagePath); err != nil {
+	if err := storage.Init("./static", *storagePath); err != nil {
 		log.Println("Error initalising storage:", err)
 		return
 	}

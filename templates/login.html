@@ -14,19 +14,21 @@
 		<!-- <fieldset> -->
 			<input type="text" id="username" name="username" placeholder="Username" />
 			<input type="password" id="password" name="password" placeholder="Password" />
-			<button type="submit" class="pure-button ure-button-primary">Log in</button>
+			<button type="submit" class="pure-button pure-button-primary">Log in</button>
 		<!-- </fieldset> -->
 	</form>
 	<h2>Register a new account</h2>
+	<p>Account names and passwords can only contain the following: [a-Z][A-Z][0-9], _ and -</p>
+	<p>They must also be between 4-20 characters long</p>
 	<form class="pure-form pure-form-aligned" method="POST" action="/login/register/">
 		<fieldset>
 			<div class="pure-control-group">
 				<label for="register-username">Username</label>
-				<input type="text" id="register-username" name="username" placeholder="Username" />
+				<input type="text" id="register-username" name="username" placeholder="Username" required pattern="[\w\s\-]*" required minlength="4" maxlength="20" />
 			</div>
 			<div class="pure-control-group">
 				<label for="register-password">Password</label>
-				<input type="password" id="register-password" name="password" placeholder="Password" />
+				<input type="password" id="register-password" name="password" placeholder="Password" required pattern="[\w\s\-]*" required minlength="4" maxlength="20" />
 			</div>
 			<div class="pure-control-group">
 				<label for="confirm">Confirm Password</label>
@@ -34,12 +36,23 @@
 			</div>
 			<div class="pure-control-group">
 				<label for="social">Social Security Number</label>
-				<input type="text" id="social" name="social" placeholder="Social Security Number" />
+				<input type="text" id="social" name="social" placeholder="Social Security Number" required pattern="[\w\s\-]*" />
 			</div>
 			<div class="pure-controls">
 				<button type="submit" class="pure-button ure-button-primary">Register</button>
 			</div>
 		</fieldset>
 	</form>
+	<script>
+		const regPwd = document.getElementById("register-password");
+		const regConf = document.getElementById("confirm");
+		regConf.addEventListener("input", () => {
+			if (regConf.value === regPwd.value) {
+				regConf.setCustomValidity("");
+			} else {
+				regConf.setCustomValidity("Password doesn't match.");
+			}
+		});
+	</script>
 </div>
 {{ end }}

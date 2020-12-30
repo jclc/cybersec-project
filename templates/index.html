@@ -6,20 +6,17 @@
 
 
 <div class="content">
-	<!-- <h2 class="pure-u-1">Active users</h2> -->
 	{{ if .Users }}
 	<table class="pure-table pure-table-horizontal pure-g">
 		<thead class="pure-u-1">
 			<tr>
 				<th>User</th>
-				<!-- <th class="pure-u">Uploaded files</th> -->
 			</tr>
 		</thead>
 		<tbody class="pure-u-1">
 			{{ range .Users }}
 			<tr>
 				<td><a href="/user/{{ .ID }}/">{{ .Username }}</a></td>
-				<!-- <td class="pure-u">0</td> -->
 			</tr>
 			{{ end }}
 		</tbody>

@@ -35,11 +35,11 @@ func setRegisteredUser(w http.ResponseWriter, r *http.Request, user database.Use
 	session.Values["user_id"] = user.ID
 	session.Values["username"] = user.Username
 	session.Save(r, w)
-	log.Println("User's session has been set.")
+	// log.Println("User's session has been set.")
 }
 
 func unsetRegisteredUser(w http.ResponseWriter, r *http.Request) {
-	log.Println("User's session has been unset.")
+	// log.Println("User's session has been unset.")
 	session, _ := store.Get(r, "session-name")
 	delete(session.Values, "user_id")
 	delete(session.Values, "username")
@@ -47,7 +47,7 @@ func unsetRegisteredUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleLoginPage(w http.ResponseWriter, r *http.Request) {
-	log.Println("/login/")
+	// log.Println("/login/")
 	baseCtx := BaseContext{
 		Nav:  "login",
 		User: getRegisteredUser(r),
@@ -56,7 +56,7 @@ func handleLoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleLoginAttempt(w http.ResponseWriter, r *http.Request) {
-	log.Println("/login/auth/")
+	// log.Println("/login/auth/")
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -135,8 +135,7 @@ func handleRegistration(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleLogout(w http.ResponseWriter, r *http.Request) {
-	log.Println("/login/logout/")
-	// log.Println("HELLO????")
+	// log.Println("/login/logout/")
 	unsetRegisteredUser(w, r)
 	http.Redirect(w, r, "/", http.StatusFound)
 }

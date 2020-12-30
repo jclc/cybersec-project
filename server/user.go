@@ -75,6 +75,7 @@ func handleMessage(w http.ResponseWriter, r *http.Request) {
 	if msg.Content == "" {
 		log.Println("Empty message")
 	} else {
+		log.Println("MSG:", msg.Content)
 		if err := msg.Save(); err != nil {
 			log.Println("Error saving message:", err)
 		}

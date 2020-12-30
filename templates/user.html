@@ -58,11 +58,10 @@
 			</tr>
 		</thead>
 		<tbody>
-
 			{{ range .Uploads }}
 			<tr>
 				<td>{{ .Timestamp | fdate }}</td>
-				<td><a href="/uploads/{{ .ID }}/">{{ .Filename }}</a></td>
+				<td><a href="/upload/{{ .ID }}/">{{ .Filename }}</a></td>
 				{{ if .Visibility }}
 				<td>Public</td>
 				{{ else }}
@@ -70,9 +69,9 @@
 				{{ end }}
 				<td>
 					{{ if eq $p.LoggedInUser.ID $p.User.ID }}
-					<input type="button" value="Change"
+					<input class="pure-button" type="button" value="Change"
 						onclick="changeUploadVisibility({{ .ID }});">
-					<input type="button" value="Delete"
+					<input class="pure-button" type="button" value="Delete"
 						onclick="deleteUpload({{ .ID }});">
 					{{ end }}
 				</td>
@@ -83,19 +82,52 @@
 	{{ else }}
 	<p>No files have been uploaded.</p>
 	{{ end }}
+	<br />
+
+
+	{{ if eq .LoggedInUser.ID .User.ID }}
+	<h2>Upload file</h2>
+	<p>Max size 32MB</p>
+	<form class="pure-form" method="POST" action="/upload/" enctype="multipart/form-data">
+		<input id="file-upload" class="pure-i-4-5" type="file" name="file">
+		<button id="file-submit" type="submit" class="pure-button pure-button-disabled">Upload</button>
+	</form>
+
+
+	<script>
+		const fileElement = document.getElementById("file-upload");
+		const button = document.getElementById("file-submit");
+		fileElement.addEventListener("change", () => {
+			const fileList = fileElement.files;
+			if (fileList.length != 1 || fileList[0].size > (32 * 1024 * 1024)) {
+				button.setAttribute("class", "pure-button-disabled");
+			} else {
+				button.removeAttribute("class", "pure-button-disabled")
+			}
+		}, false);
+	</script>
+	{{ end }}
 
 
 	{{ if .LoggedInUser.ID }}
 	<h2>Post a message</h2>
-	<form class="pure-form pure-g" method="POST" action="/user/{{ .User.ID }}/message/">
+	<form id="message-form" class="pure-form pure-g" method="POST" action="/user/{{ .User.ID }}/message/">
 		<div class="pure-u-4-5">
-			<input name="content" type="text" class="pure-input-1" />
+			<input id="message-content" name="content" type="text" class="pure-input-1" />
 		</div>
 		<div class="pure-u-1-5">
 			<button type="submit" class="pure-input-1">Post</button>
 		</div>
 	</form>
+	<script>
+		const msgContent = document.getElementById("message-content");
+		function makeSafe() {
+			msgContent.value = msgContent.value.replaceAll("<", "&lt;");
+		}
+		document.getElementById("message-form").addEventListener("submit", makeSafe, true);
+	</script>
 	{{ end }}
+
 
 	{{ if .Messages }}
 	<h2>Comments</h2>

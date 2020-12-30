@@ -3,15 +3,18 @@ package storage
 import (
 	"errors"
 	"io"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
 )
 
 var storage string
+var static string
 
-func Init(storagePath string) error {
+func Init(staticPath, storagePath string) error {
 	storage = storagePath
+	static = staticPath
 	if storage == "" {
 		storage = filepath.Join(os.TempDir(), "cybersec-file-storage")
 	}
@@ -42,10 +45,26 @@ func Get(w http.ResponseWriter, r *http.Request, storedName, realName string) er
 	if err != nil {
 		return err
 	}
+
+	if m := mime.TypeByExtension(realName); m != "" {
+		w.Header().Set("Content-Type", m)
+	}
+	w.Header().Set("Content-Disposition", "attachment; filename="+realName)
 	http.ServeContent(w, r, realName, stat.ModTime(), file)
 	return nil
 }
 
-func Store(filename string, r io.Reader) {
+func Store(filename string, r io.Reader) error {
+	file, err := os.Create(filepath.Join(storage, filename))
+	if err != nil {
+		return err
+	}
+	defer file.Close()
 
+	_, err = io.Copy(file, r)
+	return err
+}
+
+func Delete(filename string) {
+	os.Remove(filepath.Join(storage, filename))
 }
