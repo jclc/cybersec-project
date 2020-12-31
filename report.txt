@@ -1,0 +1,37 @@
+LINK: https://github.com/jclc/cybersec-project
+
+Program is written in Go. No runtime dependencies are needed, the Go compiler is only required for compilation. A C compiler is also required for the Sqlite3 dependency. Compiled binaries for Linux and Windows x86_64 should be included in the repository at the time of submission. The binary will run with default values, but you can use the "-h" or "--help" switches to view launch options and their default values.
+
+Compilation is as simple as running `go build .` in the project root, this will compile the executable file. On Linux you should have GCC installed. If you are having issues compiling, ensure that environment variables CGO_ENABLED=1 and CC=<path to gcc/clang> are defined. An internet connection is also required for loading library dependencies, but this is done automatically by the compiler.
+
+The application is a file sharing site with some social interactions.
+
+FLAW 1:
+Injection
+A user may inject arbitrary SQL commands by abusing the lack of input sanitisation in the database component. This can be exploited in the login/registration screen, where inputs are only validated client-side. With just a little browser tool hacking, this is easily bypassed and any strings can be sent to the backend. This can result in permanent data loss or sensitive data such as passwords or social security numbers being compromised.
+
+The flaw is actually very easy to fix thanks to modern SQL frameworks taking security seriously. Every Go SQL driver that conforms to the standard library interface has sanitised formatting built-in to every function that passes raw SQL commands. The variadric arguments after every SQL function can be used to input any number of arguments, which are correctly and type-safely escaped and inserted into the SQL command.
+
+FLAW 2:
+Broken Authentication
+This application has several issues with user authentication. Immediately entering the registration page, the user will notice the password restrictions. The user is arbitrarily restricted to using a subset of the ASCII character set with a maximum length of 20. This forces the user to use a weaker password than what they may be used to using, as the number of possible passwords drops significantly when disallowing the use of Unicode characters. Malicious users are also not penalised for invalid login attempts, allowing them to brute-force weaker credentials.
+
+A reader with an active imagination may have guessed that the character restrictions stem from a lazy attempt to mitigate injection attacks in the backend, as quotes can be used to escape the SQL queries used in user management. There may be valid reasons for restricting allowed characters, for example some seemingly identical Unicode strings may have different binary representations. At the end of the day however, it's best to figure out the most permissive system for passwords so that users can choose the best passwords. As for the brute-force issue, it can be mitigated fairly easily by implementing a limit to failed login attempts from any given IP in a given interval. It is assumed that sophisticated methods such as using a botnet to send brute-force attempts from a number of IP addresses is beyond the scope of this project.
+
+FLAW 3:
+Cross-Site Scripting
+The comment feature of this application is implemented in a naive fashion and can be used to inject any HTML data on other users' pages, including tags, scripts, styles and interactive elements. There is only weak client-side validation, which replaces ever occurrence of the "<" character with the equivalent HTML escape sequence before submitting the comment to the backend. This can already be seen for a split second by the user, giving them a hint to how to defeat this weak validation system. This may be the most dangerous of the vulnerabilities, as it allows any Javascript code to be executed by anyone who enters a user's page.
+
+Like in the previous example, the application once again relies on weak client-side validation and does not validate inputs on the backend. The Go standard library, having been designed from the ground-up to serve server backend needs, has robust facilities to sanitising text for HTML. The package "html" has a function, EscapeString, specifically for this purpose. However, an even better option would be to have used the correct template package. The Go standard library ships with two template libraries, "text/template" and "html/template". The former has been used in this project for demonstration purposes, but in a real application the latter should obviously be used, as it allows for automatic HTML sanitisation.
+
+FLAW 4:
+Broken Access Control
+The application lets users upload files to the server for storage and/or sharing. By default, uploads are hidden, and not shown to other users who are visiting the uploader's page. However, that's all that the visibility option does - hide "hidden" files from the page view. By using the correct URLs, any user can access any file regardless whether it's set to be public or not. The URLs are also easy to guess, as each upload is given an incrementing ID. A user could try uploading a file, checking its ID and brute force every ID lower than that. This is not limited to downloading other users' files, since even deleting and changing their visibility is possible using a tool such as the RESTED addon for Firefox.
+
+This is once again an easy flaw to fix that would only require to use the same user management code in the file "server/upload.go" as elsewhere in the package. The requesting user's ID should be compared the the upload's owner's ID, and rejected with an Unauthorized HTTP error. Perhaps an even better method would be to use the NotFound HTTP error, as that would not even give the malicious user a hint to which files might exist on the server.
+
+FLAW 5:
+Sensitive Data Exposure
+This is a broad flaw that results from general laziness in regard to security concerns. While not actually used anywhere in the application, the "social security number" is required in registration as a way to demonstrate how the complete lack of encryption can compromise sensitive data. As the application does not support TLS, all data is sent unencrypted to and from the backend. A man-in-the-middle attack could easily expose this data to outsiders. Naturally this also applies to the uploaded files, which the user will probably assume to be securely transmitted. Also, all passwords are stored in plain text in the database file.
+
+Thanks to the efforts of organisations such as Let's Encrypt, making secure applications has never been easier. All that is needed for TLS is a domain name, a certificate from Let's Encrypt and a couple of lines of code added to the server startup logic. The Go standard library once again provides straightforward ways to do this. As for plain text passwords; there is never a good reason to store passwords on the server. Storing only the hash and comparing the login form's password to the hash is trivial and taught early on to new web developers these days.

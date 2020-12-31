@@ -48,7 +48,6 @@ func handleUserPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleMessage(w http.ResponseWriter, r *http.Request) {
-	// log.Println("method:", r.Method)
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -72,10 +71,7 @@ func handleMessage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	msg.Author = user.Username
-	if msg.Content == "" {
-		log.Println("Empty message")
-	} else {
-		log.Println("MSG:", msg.Content)
+	if msg.Content != "" {
 		if err := msg.Save(); err != nil {
 			log.Println("Error saving message:", err)
 		}

@@ -53,8 +53,6 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	log.Println(header.Header)
-
 	upload := database.Upload{
 		Owner:      user.ID,
 		Filename:   header.Filename,
@@ -68,9 +66,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Filename:", header.Filename)
 	storageFile := storageName(upload.ID)
-	log.Println("Storing as:", storageFile)
 	err = storage.Store(storageFile, file)
 	if err != nil {
 		log.Println("Error storing file:", err)

@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/jclc/cybersec-project/database"
@@ -80,9 +79,6 @@ func handleLoginAttempt(w http.ResponseWriter, r *http.Request) {
 		RenderTemplate(w, "login.html", nil, "insufficient login information")
 		return
 	}
-
-	// Keep track of logins just in case someone tries to do something nefarious.
-	log.Printf("User '%s' with password '%s' attempted login\n", username, password)
 
 	user, err := database.GetUser(username, password)
 	if err != nil {
